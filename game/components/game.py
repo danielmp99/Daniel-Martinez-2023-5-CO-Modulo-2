@@ -4,6 +4,7 @@ from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, F
 from game.components.spaceship import Spaceship
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
+from game.components.menu import Menu
 
 class Game:
     def __init__(self):
@@ -19,6 +20,16 @@ class Game:
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()
         self.bullet_manager = BulletManager()
+        self.menu = Menu('Press Any Key To Start', self.screen)
+        self.running = False
+
+    def execute(self):
+        self.running = True
+        while self.running:
+            if not self.playing:
+                self.show_menu()
+        pygame.display.quit()
+        pygame.quit()
 
     def run(self):
         # Game loop: events - update - draw
@@ -27,8 +38,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-        pygame.display.quit()
-        pygame.quit()
+        
 
     def events(self):
         for event in pygame.event.get():
@@ -40,6 +50,7 @@ class Game:
         self.player.update(user_input, self)
         self.enemy_manager.update(self)
         self.bullet_manager.update(self)
+        self.menu.update
 
 
     def draw(self):
@@ -61,3 +72,8 @@ class Game:
             self.screen.blit(image, (self.x_pos_bg, self.y_pos_bg - image_height))
             self.y_pos_bg = 0
         self.y_pos_bg += self.game_speed
+
+    def show_menu(self):
+        self.menu.draw(self.screen)
+
+        self.menu.update()
