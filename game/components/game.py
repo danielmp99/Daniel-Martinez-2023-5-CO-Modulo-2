@@ -14,7 +14,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.playing = False
         self.game_speed = 10
-        self.x_pos_bg = 0
+        self.x_pos_bg = 0   
         self.y_pos_bg = 0
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()
@@ -37,7 +37,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input)
+        self.player.update(user_input, self)
         self.enemy_manager.update(self)
         self.bullet_manager.update(self)
 
