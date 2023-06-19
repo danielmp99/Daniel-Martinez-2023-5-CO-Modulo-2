@@ -1,6 +1,6 @@
 import pygame
 
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from game.utils.constants import BG, FONT_STYLE, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
 from game.components.spaceship import Spaceship
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
@@ -22,6 +22,8 @@ class Game:
         self.bullet_manager = BulletManager()
         self.menu = Menu('Press Any Key To Start', self.screen)
         self.running = False
+        self.death_count = 0
+        self.score = 0
 
     def execute(self):
         self.running = True
@@ -33,6 +35,7 @@ class Game:
 
     def run(self):
         # Game loop: events - update - draw
+        self.score = 0
         self.playing = True
         while self.playing:
             self.events()
@@ -60,6 +63,7 @@ class Game:
         self.player.draw(self.screen)
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
+        self.draw_score()
         pygame.display.update()
         #pygame.display.flip()
 
@@ -74,6 +78,25 @@ class Game:
         self.y_pos_bg += self.game_speed
 
     def show_menu(self):
+        self.menu.reset(self.screen)
+        
+        if self.death_count > 0:
+            self.menu.update_message('new message')
         self.menu.draw(self.screen)
 
-        self.menu.update()
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = SCREEN_HEIGHT // 2
+        icon = pygame.transform.scale(ICON, (80, 120))
+        self.screen.blit(icon, (half_screen_width - 50, half_screen_height - 150))
+
+        self.menu.update(self)
+
+    def update_score(self):
+        self.score += 1
+
+    def draw_score(self):
+        font = pygame.font.Font(FONT_STYLE, 30)
+        text = font.render(f'score: {self.score}', True, (255, 255, 255))
+        text_rect = text.get_rect()
+        text_rect.center = (1000, 50)
+        self.screen.blit(text, text_rect)
